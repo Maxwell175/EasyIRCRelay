@@ -1,0 +1,83 @@
+// This is a simple config file.
+{
+    // This is a collection of networks that will be relayed.
+    "Networks": [
+        // A single network starts with { and ends with }. They are separated my commas.
+        // In other words, a simple JSON format.
+        {
+            // The IRC server to connect to.
+            "Hostname": "irc.freenode.net",
+            // The Port to connect to.
+            "Port": 6697,
+            // Should we use SSL? (true or false)
+            "UseSSL": true,
+            // Server Password to use. Mainly useful to connect to BNCs.
+            // If this is null, no password is sent.
+            "ServerPassword": null,
+            // Nickname to connect as.
+            "BotNick": "RelayBot",
+            // Nickname to use if above is occupied.
+            "BotAltNick": "RelayBot_",
+            // Username (aka Ident) to give to the server.
+            "BotUsername": "EasyIRCRelay",
+            // Realname visible in whois.
+            "BotRealName": "https://github.com/MDTech-us-MAN/EasyIRCRelay",
+            // Command to run on connect. (Useful for services login)
+            // Do NOT start with a / ! Set to null to disable.
+            "CommandOnConnect": "ns identify <MyPassword>",
+            // Channel to relay to/from.
+            "Channel": "#RelayChan",
+            // The format of the message to be printed on other networks.
+            // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${SentBy} is replaced with the nick of the user that sent the message.
+            // ${Message} is replaced with the text of the message.
+            "MessageFormat": "(${Color}7Freenode${Color}) [${SentBy}]: ${Message}",
+            // The format of the message to be printed on other networks.
+            // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${SentBy} is replaced with the nick of the user that sent the message.
+            // ${Action} is replaced with the text of the action.
+            "ActionFormat": "(${Color}7Freenode${Color}) ${Color}4* ${Color}6[${SentBy}] ${Action}",
+            // The format of the nick change message printed to other networks.
+            // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${OldNick} is replaced with the user's old nick.
+            // ${NewNick} is replaced with the user's new nick.
+            "NickChangeFormat": "(${Color}7Freenode${Color}) ${Color}4${OldNick}${Color} has changed their nickname to ${Color}4${NewNick}${Color}",
+            // The format of the nick change message printed to other networks.
+            // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${Nick} is replaced with the new user's nick.
+            // ${Host} is replaced with the new user's host (ex: TestUser@example.com).
+            "JoinFormat": "(${Color}7Freenode${Color}) ${Color}3*${Color}4*${Color}3*${Color} ${Color}4${Nick}${Color} (${Host}) has joined the channel!",
+            // The format of the nick change message printed to other networks.
+            // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${Nick} is replaced with the user's nick.
+            // ${Host} is replaced with the user's host (ex: TestUser@example.com).
+            "PartFormat": "(${Color}7Freenode${Color}) ${Color}4*${Color}3*${Color}7*${Color} ${Color}4${Nick}${Color} (${Host}) has parted the channel!",
+            // The format of the nick change message printed to other networks.
+            // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${Nick} is replaced with the user's nick.
+            // ${Host} is replaced with the user's host (ex: TestUser@example.com).
+            // ${QuitMsg} is replaced with the user's quit message.
+            "QuitFormat": "(${Color}7Freenode${Color}) ${Color}4.${Color}3.${Color}4.${Color} ${Color}4${Nick}${Color} (${Host}) has quitted (Message: ${Color}7${QuitMsg}${Color}))"
+        },
+        // A network but without comments (useful to copy paste).
+        {
+            "Hostname": "irc.planetchat.com",
+            "Port": 6697,
+            "UseSSL": true,
+            "ServerPassword": null,
+            "BotNick": "RelayBot",
+            "BotAltNick": "RelayBot_",
+            "BotUsername": "EasyIRCRelay",
+            "BotRealName": "https://github.com/MDTech-us-MAN/EasyIRCRelay",
+            "CommandOnConnect": "ns identify <MyPassword>",
+            "Channel": "#RelayChan",
+            "MessageFormat": "(${Color}3PlanetChat${Color}) [${SentBy}]: ${Message}",
+            "ActionFormat": "(${Color}3PlanetChat${Color}) ${Color}4* ${Color}6[${SentBy}] ${Action}",
+            "NickChangeFormat": "(${Color}3PlanetChat${Color}) ${Color}4${OldNick}${Color} has changed their nickname to ${Color}4${NewNick}${Color}",
+            "JoinFormat": "(${Color}3PlanetChat${Color}) ${Color}3*${Color}4*${Color}3*${Color} ${Color}4${Nick}${Color} (${Host}) has joined the channel!",
+            "PartFormat": "(${Color}3PlanetChat${Color}) ${Color}4*${Color}3*${Color}7*${Color} ${Color}4${Nick}${Color} (${Host}) has parted the channel!",
+            "QuitFormat": "(${Color}3PlanetChat${Color}) ${Color}4.${Color}3.${Color}4.${Color} ${Color}4${Nick}${Color} (${Host}) has quitted (Message: ${Color}7${QuitMsg}${Color}))"
+        }
+        // No comma after last network.
+    ]
+}
