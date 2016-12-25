@@ -12,7 +12,8 @@ EasyIRCRelay is a simple IRC bot that relays messages between channels on differ
 4. `./EasyIRCRelay`
 
 # TODO
- * Make global topic selection.
+ * ~~Make global topic selection.~~
+ * Change topic on all networks after rehash.
  * Make an init script to make it easier to start this app it the background.
  * Better Config error-checking.
 
