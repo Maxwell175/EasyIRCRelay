@@ -1,5 +1,12 @@
 // This is a simple config file.
 {
+    // The topic will be set to this on each network we join to.
+    // ${Color} is replaced with the color charecter.
+    // ${Bold} is replaced with the bold charecter.
+    // ${Italic} is replaced with the italic charecter.
+    // ${Underline} is replaced with the underline charecter.
+    "GlobalTopic": "${Bold}${Color}4Welcome to GlobalSocial!${Color}${Bold} Here you can chat with all your friends on different networks including ${Color}3PlanetChat${Color}, ${Color}7Freenode${Color}, ${Color}5Rizon${Color}, and ${Color}10ICQ-Chat${Color}!",
+    
     // This is a collection of networks that will be relayed.
     "Networks": [
         // A single network starts with { and ends with }. They are separated my commas.
@@ -29,31 +36,49 @@
             "Channel": "#RelayChan",
             // The format of the message to be printed on other networks.
             // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${Bold} is replaced with the bold charecter.
+            // ${Italic} is replaced with the italic charecter.
+            // ${Underline} is replaced with the underline charecter.
             // ${SentBy} is replaced with the nick of the user that sent the message.
             // ${Message} is replaced with the text of the message.
             "MessageFormat": "(${Color}7Freenode${Color}) [${SentBy}]: ${Message}",
             // The format of the message to be printed on other networks.
             // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${Bold} is replaced with the bold charecter.
+            // ${Italic} is replaced with the italic charecter.
+            // ${Underline} is replaced with the underline charecter.
             // ${SentBy} is replaced with the nick of the user that sent the message.
             // ${Action} is replaced with the text of the action.
             "ActionFormat": "(${Color}7Freenode${Color}) ${Color}4* ${Color}6[${SentBy}] ${Action}",
             // The format of the nick change message printed to other networks.
             // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${Bold} is replaced with the bold charecter.
+            // ${Italic} is replaced with the italic charecter.
+            // ${Underline} is replaced with the underline charecter.
             // ${OldNick} is replaced with the user's old nick.
             // ${NewNick} is replaced with the user's new nick.
             "NickChangeFormat": "(${Color}7Freenode${Color}) ${Color}4${OldNick}${Color} has changed their nickname to ${Color}4${NewNick}${Color}",
             // The format of the nick change message printed to other networks.
             // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${Bold} is replaced with the bold charecter.
+            // ${Italic} is replaced with the italic charecter.
+            // ${Underline} is replaced with the underline charecter.
             // ${Nick} is replaced with the new user's nick.
             // ${Host} is replaced with the new user's host (ex: TestUser@example.com).
             "JoinFormat": "(${Color}7Freenode${Color}) ${Color}3*${Color}4*${Color}3*${Color} ${Color}4${Nick}${Color} (${Host}) has joined the channel!",
             // The format of the nick change message printed to other networks.
             // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${Bold} is replaced with the bold charecter.
+            // ${Italic} is replaced with the italic charecter.
+            // ${Underline} is replaced with the underline charecter.
             // ${Nick} is replaced with the user's nick.
             // ${Host} is replaced with the user's host (ex: TestUser@example.com).
             "PartFormat": "(${Color}7Freenode${Color}) ${Color}4*${Color}3*${Color}7*${Color} ${Color}4${Nick}${Color} (${Host}) has parted the channel!",
             // The format of the nick change message printed to other networks.
             // ${Color} is replaced with the color charecter. ${Color}3 means color code 3, green.
+            // ${Bold} is replaced with the bold charecter.
+            // ${Italic} is replaced with the italic charecter.
+            // ${Underline} is replaced with the underline charecter.
             // ${Nick} is replaced with the user's nick.
             // ${Host} is replaced with the user's host (ex: TestUser@example.com).
             // ${QuitMsg} is replaced with the user's quit message.

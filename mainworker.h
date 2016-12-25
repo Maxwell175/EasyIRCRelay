@@ -46,18 +46,24 @@ public:
 
 private:
 
+    const QString BoldCode = "\x02";
+    const QString ColorCode = "\x03";
+    const QString ItalicCode = "\x1D";
+    const QString UnderlineCode = "\x1F";
+
+    QString GlobalTopic = "";
+
+    QSet<QVariantMap> ParseConfig();
+
+    bool containsNetwork(QSet<QVariantMap> A, QVariantMap B);
+
     void processMessage(IrcPrivateMessage* message);
     void processNickChange(IrcNickMessage* message);
     void processJoin(IrcJoinMessage* message);
     void processPart(IrcPartMessage* message);
     void processQuit(IrcQuitMessage* message);
 
-    const QString ColorCode = "\x03";
-
-    QSet<QVariantMap> ParseConfig();
-
-    bool containsNetwork(QSet<QVariantMap> A, QVariantMap B);
-
+    QString FormatTopic(QString Format);
     QString FormatMessage(QString Format, QString Nick, QString Message);
     QString FormatAction(QString Format, QString Nick, QString Action);
     QString FormatNickChangeMessage(QString Format, QString OldNick, QString NewNick);

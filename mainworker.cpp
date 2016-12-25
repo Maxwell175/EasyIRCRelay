@@ -22,6 +22,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QRegExp>
+#include <QTimer>
 
 #include "mainworker.h"
 
@@ -41,7 +42,9 @@ void MainWorker::unixSignalHandler(int signal) {
         foreach (QVariantMap RelayedNetwork, RelayNetworks) {
             IrcConnection* CurrConn = (IrcConnection*) RelayedNetwork["Connection"].value<QObject*>();
             CurrConn->quit();
+            CurrConn->close();
         }
+        exit(0);
     }
 }
 
@@ -114,7 +117,16 @@ void MainWorker::processNickChange(IrcNickMessage* message) {
 
 void MainWorker::processJoin(IrcJoinMessage* message) {
     if (message->isOwn()) {
-        // Ignore our own join.
+        // If it is us joining, we should set the topic if needed.
+        if (GlobalTopic != "") {
+            // Leave a delay in case services still didnt give us op.
+            IrcConnection* CurrConn = message->connection();
+            QString Channel = message->channel();
+            QTimer::singleShot(1500, this,
+                        [CurrConn, Channel, this]() {
+                            CurrConn->sendRaw(QString("TOPIC %1 :%2").arg(Channel, this->GlobalTopic));
+                        });
+        }
         return;
     }
 
@@ -199,10 +211,25 @@ void MainWorker::processQuit(IrcQuitMessage* message) {
     }
 }
 
+QString MainWorker::FormatTopic(QString Format) {
+    QString ReturnVal = Format;
+
+    ReturnVal = ReturnVal.replace("${Color}", ColorCode);
+    ReturnVal = ReturnVal.replace("${Bold}", BoldCode);
+    ReturnVal = ReturnVal.replace("${Italic}", ItalicCode);
+    ReturnVal = ReturnVal.replace("${Underline}", UnderlineCode);
+
+    //qDebug() << "Formatted message:" << ReturnVal;
+
+    return ReturnVal;
+}
 QString MainWorker::FormatMessage(QString Format, QString Nick, QString Message) {
     QString ReturnVal = Format;
 
     ReturnVal = ReturnVal.replace("${Color}", ColorCode);
+    ReturnVal = ReturnVal.replace("${Bold}", BoldCode);
+    ReturnVal = ReturnVal.replace("${Italic}", ItalicCode);
+    ReturnVal = ReturnVal.replace("${Underline}", UnderlineCode);
     ReturnVal = ReturnVal.replace("${SentBy}", Nick);
     ReturnVal = ReturnVal.replace("${Message}", Message);
 
@@ -214,6 +241,9 @@ QString MainWorker::FormatAction(QString Format, QString Nick, QString Action) {
     QString ReturnVal = Format;
 
     ReturnVal = ReturnVal.replace("${Color}", ColorCode);
+    ReturnVal = ReturnVal.replace("${Bold}", BoldCode);
+    ReturnVal = ReturnVal.replace("${Italic}", ItalicCode);
+    ReturnVal = ReturnVal.replace("${Underline}", UnderlineCode);
     ReturnVal = ReturnVal.replace("${SentBy}", Nick);
     ReturnVal = ReturnVal.replace("${Action}", Action);
 
@@ -225,6 +255,9 @@ QString MainWorker::FormatNickChangeMessage(QString Format, QString OldNick, QSt
     QString ReturnVal = Format;
 
     ReturnVal = ReturnVal.replace("${Color}", ColorCode);
+    ReturnVal = ReturnVal.replace("${Bold}", BoldCode);
+    ReturnVal = ReturnVal.replace("${Italic}", ItalicCode);
+    ReturnVal = ReturnVal.replace("${Underline}", UnderlineCode);
     ReturnVal = ReturnVal.replace("${OldNick}", OldNick);
     ReturnVal = ReturnVal.replace("${NewNick}", NewNick);
 
@@ -236,6 +269,9 @@ QString MainWorker::FormatJoinMessage(QString Format, QString Nick, QString Iden
     QString ReturnVal = Format;
 
     ReturnVal = ReturnVal.replace("${Color}", ColorCode);
+    ReturnVal = ReturnVal.replace("${Bold}", BoldCode);
+    ReturnVal = ReturnVal.replace("${Italic}", ItalicCode);
+    ReturnVal = ReturnVal.replace("${Underline}", UnderlineCode);
     ReturnVal = ReturnVal.replace("${Nick}", Nick);
     ReturnVal = ReturnVal.replace("${Host}", Ident + "@" + Host);
 
@@ -247,6 +283,9 @@ QString MainWorker::FormatPartMessage(QString Format, QString Nick, QString Iden
     QString ReturnVal = Format;
 
     ReturnVal = ReturnVal.replace("${Color}", ColorCode);
+    ReturnVal = ReturnVal.replace("${Bold}", BoldCode);
+    ReturnVal = ReturnVal.replace("${Italic}", ItalicCode);
+    ReturnVal = ReturnVal.replace("${Underline}", UnderlineCode);
     ReturnVal = ReturnVal.replace("${Nick}", Nick);
     ReturnVal = ReturnVal.replace("${Host}", Ident + "@" + Host);
 
@@ -258,6 +297,9 @@ QString MainWorker::FormatQuitMessage(QString Format, QString Nick, QString Iden
     QString ReturnVal = Format;
 
     ReturnVal = ReturnVal.replace("${Color}", ColorCode);
+    ReturnVal = ReturnVal.replace("${Bold}", BoldCode);
+    ReturnVal = ReturnVal.replace("${Italic}", ItalicCode);
+    ReturnVal = ReturnVal.replace("${Underline}", UnderlineCode);
     ReturnVal = ReturnVal.replace("${Nick}", Nick);
     ReturnVal = ReturnVal.replace("${Host}", Ident + "@" + Host);
     ReturnVal = ReturnVal.replace("${QuitMsg}", QuitMsg);
@@ -270,6 +312,7 @@ QString MainWorker::FormatQuitMessage(QString Format, QString Nick, QString Iden
 void MainWorker::ReloadConfig()
 {
     QSet<QVariantMap> OldNetworks = RelayNetworks;
+    QString OldTopic = GlobalTopic;
 
     QSet<QVariantMap> ConfigNetworks = ParseConfig();
 
@@ -286,9 +329,9 @@ void MainWorker::ReloadConfig()
     OldNetworks = RelayNetworks;
 
     foreach (QVariantMap ConfigNetwork, ConfigNetworks) {
-        if (!containsNetwork(OldNetworks, ConfigNetwork)) {
-            IrcConnection* CurrConn = new IrcConnection(this);
+        IrcConnection* CurrConn = new IrcConnection(this);
 
+        if (!containsNetwork(OldNetworks, ConfigNetwork)) {
             CurrConn->setHost(ConfigNetwork["Hostname"].toString());
             CurrConn->setPort(ConfigNetwork["Port"].toInt());
             CurrConn->setSecure(ConfigNetwork["UseSSL"].toBool());
@@ -313,6 +356,11 @@ void MainWorker::ReloadConfig()
             ConfigNetwork.insert("Connection", QVariant::fromValue<QObject*>(CurrConn));
 
             RelayNetworks.insert(ConfigNetwork);
+        } else {
+            // If this network already existed before, check if we need to change the topic there.
+            if (OldTopic != GlobalTopic) {
+                CurrConn->sendRaw(QString("TOPIC %1 :%2").arg(ConfigNetwork["Channel"].toString(), GlobalTopic));
+            }
         }
     }
 }
@@ -350,12 +398,12 @@ QSet<QVariantMap> MainWorker::ParseConfig()
         }
     }
 
-    QJsonParseError* configParseError;
+    QJsonParseError configParseError;
 
-    QJsonDocument configDoc = QJsonDocument::fromJson(ConfigTxt.toUtf8(), configParseError);
+    QJsonDocument configDoc = QJsonDocument::fromJson(ConfigTxt.toUtf8(), &configParseError);
 
-    if (configParseError->error != QJsonParseError::NoError) {
-        qDebug() << "Invalid config file:" << configParseError->errorString();
+    if (configParseError.error != QJsonParseError::NoError) {
+        qDebug() << "Invalid config file:" << configParseError.errorString();
         exit(1);
     }
 
@@ -365,6 +413,8 @@ QSet<QVariantMap> MainWorker::ParseConfig()
     }
 
     QJsonObject configObj = configDoc.object();
+
+    GlobalTopic = configObj["GlobalTopic"].isString() ? FormatTopic(configObj["GlobalTopic"].toString()) : "";
 
     QJsonArray networksArray = configObj["Networks"].toArray();
 
