@@ -11,6 +11,11 @@ EasyIRCRelay is a simple IRC bot that relays messages between channels on differ
 3. Edit the `config.json` file.
 4. `./EasyIRCRelay`
 
+# TODO
+ * Make global topic selection.
+ * Make an init script to make it easier to start this app it the background.
+ * Better Config error-checking.
+
 <p>&nbsp;</p>
 
 I would also like to thank the developers of LibCommuni for their awesome, easy-to-use IRC library!
