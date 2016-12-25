@@ -7,7 +7,7 @@ EasyIRCRelay is a simple IRC bot that relays messages between channels on differ
 
 # Installation
 1. `qmake`
-2. `make`
+2. `make` (feel free to use `make -j8` in order for the build to be faster.)
 3. Edit the `config.json` file.
 4. `./EasyIRCRelay`
 
