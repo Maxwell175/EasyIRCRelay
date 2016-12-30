@@ -2,8 +2,7 @@
 EasyIRCRelay is a simple IRC bot that relays messages between channels on different servers.
 
 # Requirements
- * QT 5 (with qmake)
-	It can be easily installed on ubuntu using `sudo apt install qt5-default`.
+ * QT 5.4 (with qmake)
 
 # Installation
 1. `qmake`
