@@ -81,7 +81,7 @@ HEADERS += \
 DISTFILES += config.json \
     EasyIRCRelay.init.m4
 
-copydata.commands = install -C -m 644 $$PWD/config.json $$OUT_PWD/config.json
+copydata.commands = install -C -m 644 $$PWD/config.json $$OUT_PWD/config.json | true
 first.depends = $(first) copydata
 export(first.depends)
 export(copydata.commands)
