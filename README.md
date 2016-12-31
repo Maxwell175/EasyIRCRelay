@@ -5,15 +5,15 @@ EasyIRCRelay is a simple IRC bot that relays messages between channels on differ
  * QT 5.4 (with qmake)
 
 # Installation
-1. `qmake`
+1. `qmake` (Build options can be changed here)
 2. `make` (feel free to use `make -j8` in order for the build to be faster.)
-3. Edit the `config.json` file.
-4. `./EasyIRCRelay`
+3. `sudo make install`
+4. `sudo update-rc.d EasyIRCRelay defaults` (if you want to the relay to start on boot)
 
 # TODO
  * ~~Make global topic selection.~~
  * Change topic on all networks after rehash.
- * Make an init script to make it easier to start this app it the background.
+ * ~~Make an init script to make it easier to start this app it the background.~~
  * Better Config error-checking.
 
 <p>&nbsp;</p>
