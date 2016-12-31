@@ -115,7 +115,7 @@ isEmpty(NOINITD) {
     QMAKE_EXTRA_TARGETS += first getInitD
 
 
-    InitDInstall.commands = install -C -D EasyIRCRelay.init $$INITDDIR/EasyIRCRelay
+    InitDInstall.commands = install -D EasyIRCRelay.init $$INITDDIR/EasyIRCRelay
     InitDLogInstall.commands = touch /var/log/EasyIRCRelay.log && chown \"$$RUNAS\" /var/log/EasyIRCRelay.log
     install.depends += InitDInstall InitDLogInstall
     QMAKE_EXTRA_TARGETS += install InitDInstall InitDLogInstall
