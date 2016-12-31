@@ -17,15 +17,38 @@
 
 
 #include <QCoreApplication>
+#include <iostream>
 
 #include "mainworker.h"
+
+void PrintSyntax(char *argv[]) {
+    std::cerr << argv[0];
+    std::cerr << " [Config File Path]" << std::endl;
+    std::cerr << "Note that if no config path is specified, I will look in my working directory." << std::endl;
+}
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
     MainWorker* Worker = new MainWorker();
-    Worker->StartMainWorker();
+    switch (argc) {
+    case 1:
+        Worker->StartMainWorker();
+        break;
+    case 2:
+        if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "-h") == 0) {
+            PrintSyntax(argv);
+            return 0;
+        }
+        Worker->StartMainWorker(QString(argv[1]));
+        break;
+    default:
+        std::cerr << "Too many arguments." << std::endl;
+        PrintSyntax(argv);
+        exit(1);
+        break;
+    }
 
     return a.exec();
 }

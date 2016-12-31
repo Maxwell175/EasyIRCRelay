@@ -39,12 +39,15 @@ class MainWorker : public QObject
 
 public:
     void StartMainWorker();
+    void StartMainWorker(QString myConfigPath);
 
     QSet<QVariantMap> RelayNetworks;
 
     void ReloadConfig();
 
 private:
+
+    QString configPath = "config.json";
 
     const QString BoldCode = "\x02";
     const QString ColorCode = "\x03";

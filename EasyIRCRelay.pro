@@ -16,6 +16,44 @@
 message("Building EasyIRCRelay...")
 message("Copyright (c) 2016 - Maxwell Dreytser")
 message("LibCommuni, a copy of which is included, is copyright of its owner.")
+message("")
+message("Configuration:")
+message("BINDIR  - The directory where the compiled executable will be located.")
+message("    Default: /usr/local/bin")
+message("CONFDIR - The directory where the config folder should be created.")
+message("    Config will be installed to <CONFDIR>/EasyIRCRelay.")
+message("    Default: /etc")
+message("NOINITD - Disables the installation as a service. (set to any non-empty value)")
+message("RUNAS   - (Required!) Specifies the user the service will run as. (only if NOINITD isn't set)")
+message("    Note: It is not recommended to run as root!")
+message("")
+message("Example: qmake BINDIR=/usr/bin NOINITD=true")
+message("Example: qmake BINDIR=/opt CONFDIR=/opt/etc RUNAS=relayuser")
+
+isEmpty(BINDIR) {
+    CONFIG(debug, debug|release){
+        BINDIR = $$OUT_PWD
+    } else {
+        BINDIR = /usr/local/bin
+    }
+}
+
+isEmpty(CONFDIR) {
+    CONFIG(debug, debug|release){
+        CONFDIR = $$OUT_PWD
+    } else {
+        CONFDIR = /etc
+    }
+}
+
+isEmpty(INITDDIR) {
+    CONFIG(debug, debug|release){
+        INITDDIR = $$OUT_PWD
+    } else {
+        INITDDIR = /etc/init.d
+    }
+}
+
 
 QT += core
 QT += network
@@ -24,6 +62,7 @@ QT -= gui
 CONFIG += c++11
 
 TARGET = EasyIRCRelay
+TARGET.path = $$BINDIR
 CONFIG += console
 CONFIG -= app_bundle
 
@@ -39,10 +78,45 @@ HEADERS += \
     mainworker.h \
     sigwatch.h
 
-DISTFILES += config.json
+DISTFILES += config.json \
+    EasyIRCRelay.init.m4
 
-copydata.commands = $(COPY) $$PWD/config.json $$OUT_PWD
+copydata.commands = install -C -m 644 $$PWD/config.json $$OUT_PWD/config.json
 first.depends = $(first) copydata
 export(first.depends)
 export(copydata.commands)
 QMAKE_EXTRA_TARGETS += first copydata
+
+
+binInstall.commands = install -C -D $$OUT_PWD/EasyIRCRelay $$BINDIR/EasyIRCRelay
+
+appConfigInstall.commands = install -b -C -D -m 644 $$OUT_PWD/config.json $$CONFDIR/EasyIRCRelay/config.json
+
+install.depends = binInstall
+install.depends += appConfigInstall
+
+QMAKE_EXTRA_TARGETS += install binInstall appConfigInstall
+
+isEmpty(NOINITD) {
+    CONFIG(debug, debug|release){
+        RUNAS = $$USER
+    } else {
+        isEmpty(RUNAS) {
+            RUNAS = $$prompt("What user should the program will run as")
+        }
+    }
+
+    genInitD.target = $$PWD/EasyIRCRelay.init.m4
+    getInitD.commands = "m4 -D \"_RUNASUSERNAME_=$$RUNAS\" -D \"_BINPREFIX_=$$BINDIR\" -D \"_ETCPREFIX_=$$CONFDIR\" $$PWD/EasyIRCRelay.init.m4 > $$OUT_PWD/EasyIRCRelay.init"
+
+    first.depends += getInitD
+    export(first.depends)
+    export(getInitD.commands)
+    QMAKE_EXTRA_TARGETS += first getInitD
+
+
+    InitDInstall.commands = install -C -D EasyIRCRelay.init $$INITDDIR/EasyIRCRelay
+    InitDLogInstall.commands = touch /var/log/EasyIRCRelay.log && chown \"$$RUNAS\" /var/log/EasyIRCRelay.log
+    install.depends += InitDInstall InitDLogInstall
+    QMAKE_EXTRA_TARGETS += install InitDInstall InitDLogInstall
+}

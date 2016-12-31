@@ -35,6 +35,12 @@ void MainWorker::StartMainWorker()
     connect(&sigwatcher, &UnixSignalWatcher::unixSignal, this, &MainWorker::unixSignalHandler);
 }
 
+void MainWorker::StartMainWorker(QString myConfigPath) {
+    configPath = myConfigPath;
+
+    StartMainWorker();
+}
+
 void MainWorker::unixSignalHandler(int signal) {
     if (signal == SIGHUP) {
         ReloadConfig();
@@ -379,7 +385,7 @@ QSet<QVariantMap> MainWorker::ParseConfig()
 {
     QSet<QVariantMap> ReturnVal;
 
-    QFile configFile("config.json");
+    QFile configFile(configPath);
 
     if (!configFile.open(QFile::ReadOnly)) {
         qDebug() << "Error opening config file:" << configFile.errorString();
